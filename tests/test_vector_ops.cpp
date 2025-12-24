@@ -4,8 +4,15 @@
 #include "TinyGeo/Vector.h"
 
 // Una macro simple para validar flotantes con tolerancia
-#define ASSERT_NEAR(val1, val2, epsilon) \
-    assert(std::abs((val1) - (val2)) < (epsilon) && "Value mismatch")
+#define ASSERT_NEAR(val1, val2, epsilon)                          \
+    do {                                                          \
+        if (std::abs((val1) - (val2)) >= (epsilon)) {            \
+            std::cerr << "ASSERT_NEAR failed: "                  \
+                      << #val1 << " vs " << #val2 << std::endl;  \
+            std::abort();                                        \
+        }                                                         \
+    } while (0)
+
 
 void test_arithmetic() {
     using namespace TinyGeo;
