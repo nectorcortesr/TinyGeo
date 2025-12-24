@@ -1,0 +1,34 @@
+name: TinyGeo CI
+
+# Trigger: ¿Cuándo se ejecuta?
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    # Sistema Operativo de la máquina virtual
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Bajar el código del repo
+    - uses: actions/checkout@v3
+
+    # 2. Instalar compilador (GCC ya viene en ubuntu-latest, pero aseguramos)
+    - name: Check Compiler
+      run: g++ --version
+
+    # 3. Configurar CMake
+    - name: Configure CMake
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+    # 4. Compilar (Build)
+    - name: Build
+      run: cmake --build build --config Release
+
+    # 5. Correr Tests
+    - name: Run Tests
+      working-directory: build
+      run: ctest --output-on-failure -C Release
