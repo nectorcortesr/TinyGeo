@@ -14,13 +14,10 @@ void test_arithmetic() {
     
     Vector<float, 3> sum = v1 + v2;
 
-    float sx = sum.x();
-    float sy = sum.y();
-    float sz = sum.z();
+    ASSERT_NEAR(sum.x(), 5.0f, 1e-5f);
+    ASSERT_NEAR(sum.y(), 7.0f, 1e-5f);
+    ASSERT_NEAR(sum.z(), 9.0f, 1e-5f);
 
-    ASSERT_NEAR(sx, 5.0f, 1e-5f);
-    ASSERT_NEAR(sy, 7.0f, 1e-5f);
-    ASSERT_NEAR(sz, 9.0f, 1e-5f);
     
     std::cout << "[PASS] Arithmetic" << std::endl;
 }
@@ -36,8 +33,7 @@ void test_geometry() {
     // Cross product
     Vector<float, 3> z = cross(x, y);
 
-    float zz = z.z();
-    ASSERT_NEAR(zz, 1.0f, 1e-5f); // Debe ser (0,0,1)
+    ASSERT_NEAR(z.z(), 1.0f, 1e-5f); // Debe ser (0,0,1)
     
     std::cout << "[PASS] Geometry" << std::endl;
 }
