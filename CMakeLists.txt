@@ -45,3 +45,54 @@ endif()
 # Nombre del test: "VectorOps"
 # Comando a correr: unit_tests
 add_test(NAME VectorOps COMMAND unit_tests)
+
+
+# --- TOOLS ---
+# Herramienta de diagnóstico de CPU
+add_executable(cpu_check src/cpu_check.cpp)
+
+# Flags de compilación:
+# Aunque cpu_check solo consulta info, es buena práctica mantener los warnings.
+if(MSVC)
+    target_compile_options(cpu_check PRIVATE /W4)
+else()
+    target_compile_options(cpu_check PRIVATE -Wall -Wextra)
+endif()
+
+# --- BENCHMARKING ---
+
+include(FetchContent)
+
+# Desactivar tests de la librería benchmark para ahorrar tiempo
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+
+# 1. Definir dónde bajar Google Benchmark
+FetchContent_Declare(
+  googlebenchmark
+  GIT_REPOSITORY https://github.com/google/benchmark.git
+  GIT_TAG        v1.8.3  # Versión estable reciente
+)
+
+# 2. Descargar y hacerlo disponible (puede tardar un poco la primera vez)
+FetchContent_MakeAvailable(googlebenchmark)
+
+# 3. Crear ejecutable de benchmark
+add_executable(bench_runner benchmarks/bench_matrix.cpp)
+
+# 4. Linkear con Google Benchmark y nuestra librería
+target_link_libraries(bench_runner PRIVATE benchmark::benchmark)
+# Nota: 'TinyGeo' aquí asume que es header-only (interface library), 
+# así que solo necesitamos los includes.
+target_include_directories(bench_runner PRIVATE include)
+
+# Flags de optimización MÁXIMA para benchmarks (queremos medir el mejor caso)
+if(MSVC)
+    target_compile_options(bench_runner PRIVATE /O2)
+else()
+    target_compile_options(bench_runner PRIVATE -O3)
+endif()
+
+
+add_executable(linear_solver src/linear_solver.cpp)
+
+target_include_directories(linear_solver PRIVATE include)
